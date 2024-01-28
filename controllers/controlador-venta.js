@@ -2,16 +2,11 @@ const { db } = require("../cnn")
 
 const getVentas = async (req, res) => {
     try {
-        const response = await db.manyOrNone("SELECT * FROM venta;");
-        return res.json({
-            message: 'Ventas obtenidas con éxito',
-            ventas: response
-        });
+        const response = await db.any('SELECT * FROM venta;'); // Utilizamos db.any en lugar de db.manyOrNone
+        res.json(response); // Enviamos directamente la respuesta sin envolverla en un objeto con 'ventas' como clave.
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            message: 'Error al obtener las ventas'
-        });
+        console.log(error.message); // Imprimir el mensaje de error
+        res.status(500).json({ message: error.message }); // Responder con el mensaje de error
     }
 }
 
