@@ -134,18 +134,12 @@ const updateAjusteDetalleById = async (req, res) => {
     });
   }
 
-  if (typeof aju_det_estado !== 'boolean') {
-    return res.status(400).json({
-      Error: '9997',
-      Mensaje: 'Revise aju_det_estado.'
-    });
-  }
 
   try {
-    const updateQuery = `UPDATE ajuste_detalle SET aju_det_cantidad = $1, aju_det_modificable = $2, aju_det_estado = $3
-        WHERE aju_det_id = $4`;
+    const updateQuery = `UPDATE ajuste_detalle SET aju_det_cantidad = $1, aju_det_modificable = $2
+        WHERE aju_det_id = $3`;
 
-    const values = [aju_det_cantidad, aju_det_modificable, aju_det_estado, aju_det_id];
+    const values = [aju_det_cantidad, aju_det_modificable, aju_det_id];
 
     await db.query(updateQuery, values);
     res.status(200).json({ message: 'Tabla ajuste_detalle actualizada correctamente' });
