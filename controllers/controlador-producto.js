@@ -70,11 +70,11 @@ const getProductosById = async (req, res) => {
 const getProductosByName = async (req, res) => {
   try {
     const pro_nombre = req.params.pro_nombre;
-    const response = await db.one(
+    const response = await db.any(
       `SELECT pro.pro_id, pro.pro_nombre, pro.pro_descripcion, pro.pro_valor_iva, pro.pro_costo, pro.pro_pvp, pro.pro_imagen, cat.cat_id, cat.cat_nombre
-        FROM producto pro
-        INNER JOIN categoria cat ON pro.cat_id = cat.cat_id
-        WHERE pro.pro_nombre = $1 AND pro.pro_estado = true;`,
+       FROM producto pro
+       INNER JOIN categoria cat ON pro.cat_id = cat.cat_id
+       WHERE pro.pro_nombre = $1 AND pro.pro_estado = true;`,
       [pro_nombre]
     );
     res.json(response);
