@@ -26,6 +26,17 @@ const getClienteById = async (req, res) => {
     }
 }
 
+const getClienteByName = async (req, res) => {
+    try {
+        const cli_nombre = req.params.cli_nombre;
+        const response = await db.any(`SELECT cli_id, cli_nombre FROM cliente WHERE cli_nombre = $1 
+            AND cli_estado=true;`, [cli_nombre]);
+        res.json(response);
+    } catch (error) {
+        console.log(error.message);
+        res.json({ message: error.message });
+    }
+}
 const postCliente = async (req, res) => {
     try {
         const {
@@ -95,6 +106,7 @@ const deleteCliente = async (req, res) =>{
 
 module.exports = {
     getClientes,
+    getClienteByName,
     getClienteById,
     postCliente,
     putCliente,

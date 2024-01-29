@@ -19,7 +19,7 @@ const { getCategorias, getCategoriaById, getCategoriaByName, updateCategoria, de
 const { getPrueba, updateProductoById, updateEstadoProductoById, getProductos, postCreateProducto, getProductosById, getProductosByName, deleteProducto, getAtributosProById, getProductosD, getProductosByIdD, getProductosByNameD, putUpdateProducto } = require('../controllers/controlador-producto')
 const { getAjuste, updateAjuste, postCreateAjuste, updateAjusteDetalleById, postCreateDetalleAjuste, postCreateAjustecompleto, putUpdateAjuste, updateAjusteDetalle } = require('../controllers/controlador-ajuste')
 const { postDatosSesion } = require('../controllers/controlador-sesion')
-const { getClientes, postCliente, getClienteById, putCliente, deleteCliente } = require('../controllers/controlador-cliente')
+const { getClientes, getClienteByName, postCliente, getClienteById, putCliente, deleteCliente } = require('../controllers/controlador-cliente')
 const { getVentas, postVenta, getVentaById, putVenta, deleteVenta } = require("../controllers/controlador-venta")
 
 //Rutas
@@ -64,6 +64,8 @@ router.put('/updateAjusteDetalles/:aju_numero', updateAjusteDetalle)
 //CLIENTE
 router.get('/clientes',validateAccesToken, getClientes);
 router.get('/clientes/:cli_id',validateAccesToken,getClienteById)
+router.get('/clientes/nombre/:cli_nombre',validateAccesToken, getClienteByName);
+
 router.post('/clientes/nuevo',validateAccesToken, postCliente)
 router.put('/clientes/actualizar', validateAccesToken, putCliente)
 router.delete('/clientes/eliminar/:cli_id', validateAccesToken, deleteCliente)
