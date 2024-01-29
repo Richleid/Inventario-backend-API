@@ -77,22 +77,6 @@ const getProductosByName = async (req, res) => {
         WHERE pro.pro_nombre = $1 AND pro.pro_estado = true;`,
       [pro_nombre]
     );
-    //calculo de stock
-    let total = 0;
-    const ajuste_stock = await ajustesStock(response.pro_id);
-    if (ajuste_stock.sum != null) total += parseInt(ajuste_stock.sum);
-
-    const facturas_ventas_stock = await facturasVentasStock(response.productos.pro_id);
-    if (facturas_ventas_stock != undefined) {
-      total -= facturas_ventas_stock;
-    }
-
-    const facturas_compras_stock = await facturasComprasStock(response.productos.pro_id);
-    if (facturas_compras_stock != undefined) {
-      total += facturas_compras_stock;
-    }
-
-    response.pro_stock = total;
     res.json(response);
   } catch (error) {
     console.log(error.message);
