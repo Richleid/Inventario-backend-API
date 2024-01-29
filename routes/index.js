@@ -21,6 +21,7 @@ const { getAjuste, updateAjuste, postCreateAjuste, updateAjusteDetalleById, post
 const { postDatosSesion } = require('../controllers/controlador-sesion')
 const { getClientes, getClienteByName, postCliente, getClienteById, putCliente, deleteCliente } = require('../controllers/controlador-cliente')
 const { getVentas, postVenta, getVentaById, putVenta, deleteVenta } = require("../controllers/controlador-venta")
+const { getTipoAjustes, getTipoAjusteById, getTipoAjusteByName, updateTipoAjuste } = require("../controllers/controlador-tipoAjuste")
 
 //Rutas
 router.get('/pruebaApi', getPrueba)
@@ -76,6 +77,13 @@ router.get('/ventas/:ven_id',validateAccesToken,getVentaById)
 router.post('/ventas/nuevo',validateAccesToken, postVenta)
 router.put('/ventas/actualizar', validateAccesToken, putVenta)
 router.delete('/ventas/eliminar/:ven_id', validateAccesToken, deleteVenta)
+
+//TIPO AJUSTE
+router.get('/tipoajuste/nombre/:tipo_nombre',validateAccesToken, getTipoAjusteByName);
+router.get('/tipoAjustes',validateAccesToken, getTipoAjustes);
+router.get('/tipoajuste/:tipo_id',validateAccesToken, getTipoAjusteById);
+router.put('/tipoAjuste', validateAccesToken, updateTipoAjuste);
+
 
 //Autenticacion y generacion de token
 router.get('/auth', async (req, res) => {
