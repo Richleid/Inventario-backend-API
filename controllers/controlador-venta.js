@@ -54,53 +54,60 @@ const postVenta = async (req, res) => {
 
 
 const putVenta = async (req, res) => {
-    try {
-        const { ven_id, cli_id, pro_id, ven_fecha, ven_cantidad, ven_total, ven_estado } = req.body;
-
-        // Obtener la cantidad actual de la venta antes de actualizar
-        const ventaActual = await db.one("SELECT ven_cantidad, pro_id FROM venta WHERE ven_id=$1", [ven_id]);
-        const cantidadActual = ventaActual.ven_cantidad;
-        const productoIdActual = ventaActual.pro_id;
-
-        // Verificar el stock disponible
-        const stockProducto = await db.one("SELECT pro_stock FROM producto WHERE pro_id = $1", [pro_id || productoIdActual]);
-        const stockDisponible = stockProducto.pro_stock + cantidadActual; // Stock actual más lo que se había vendido antes
-
-        if (ven_cantidad > stockDisponible) {
-            return res.status(400).json({ message: "No hay stock suficiente para actualizar la venta" });
-        }
-
-        // Preparar la consulta de actualización
-        let query = "UPDATE venta SET ";
-        cli_id && (query += "cli_id='" + cli_id + "', ");
-        pro_id && (query += "pro_id='" + pro_id + "', ");
-        ven_fecha && (query += "ven_fecha='" + ven_fecha + "', ");
-        (ven_cantidad || ven_cantidad === 0) && (query += "ven_cantidad=" + ven_cantidad + ", ");
-        ven_total && (query += "ven_total=" + ven_total + ", ");
-        (typeof ven_estado !== 'undefined') && (query += "ven_estado=" + ven_estado + ", ");
-
-        // Remover la última coma
-        query = query.slice(0, -2);
-
-        // Añadir la cláusula WHERE
-        query += " WHERE ven_id=$1";
-
-        // Actualizar la venta
-        await db.none(query, [ven_id]);
-
-        // Ajustar el stock solo si la cantidad de la venta o el producto ha cambiado
-        if (ven_cantidad && ven_cantidad !== cantidadActual) {
-            const diferencia = cantidadActual - ven_cantidad; // La diferencia podría ser negativa si se vendieron más productos
-            await db.none("UPDATE producto SET pro_stock = pro_stock + $1 WHERE pro_id = $2", [diferencia, pro_id || productoIdActual]);
-        }
-
-        res.json({ message: "Ok!! La venta fue actualizada correctamente." });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Error al actualizar la venta" });
+    const { ven_id, cli_id, pro_id, ven_fecha, ven_cantidad, ven_total, ven_estado } = req.body;
+  
+    // Verificar que los campos obligatorios estén presentes
+    if (!ven_id) {
+      return res.status(400).json({ mensaje: "Error", response: "El ID de la venta es requerido." });
     }
-};
-
+  
+    try {
+      // Obtener la venta actual para verificar cambios en la cantidad y el producto
+      const ventaActual = await db.one("SELECT ven_cantidad, pro_id FROM venta WHERE ven_id=$1", [ven_id]);
+      const { ven_cantidad: cantidadActual, pro_id: productoIdActual } = ventaActual;
+  
+      // Verificar si el nuevo producto es diferente y obtener su stock
+      const productoIdParaStock = pro_id || productoIdActual;
+      const stockProducto = await db.one("SELECT pro_stock FROM producto WHERE pro_id = $1", [productoIdParaStock]);
+  
+      // Calcular el nuevo stock disponible
+      const stockDisponible = stockProducto.pro_stock + (pro_id === productoIdActual ? cantidadActual : 0);
+  
+      // Verificar que la cantidad no sea mayor que el stock disponible
+      if (ven_cantidad > stockDisponible) {
+        return res.status(400).json({ mensaje: "Error", response: "No hay stock suficiente para la venta." });
+      }
+  
+      // Preparar la consulta de actualización con los campos proporcionados
+      const updateFields = [];
+      cli_id !== undefined && updateFields.push(`cli_id='${cli_id}'`);
+      pro_id !== undefined && updateFields.push(`pro_id='${pro_id}'`);
+      ven_fecha !== undefined && updateFields.push(`ven_fecha='${ven_fecha}'`);
+      ven_cantidad !== undefined && updateFields.push(`ven_cantidad=${ven_cantidad}`);
+      ven_total !== undefined && updateFields.push(`ven_total=${ven_total}`);
+      ven_estado !== undefined && updateFields.push(`ven_estado=${ven_estado}`);
+  
+      // Unir todos los campos para la consulta
+      const setClause = updateFields.join(', ');
+  
+      // Ejecutar la consulta de actualización
+      await db.none(`UPDATE venta SET ${setClause} WHERE ven_id=$1`, [ven_id]);
+  
+      // Actualizar el stock del producto si la cantidad de la venta cambió y es el mismo producto
+      if (ven_cantidad !== undefined && ven_cantidad !== cantidadActual && pro_id === productoIdActual) {
+        const diferenciaStock = cantidadActual - ven_cantidad;
+        await db.none("UPDATE producto SET pro_stock = pro_stock + $1 WHERE pro_id = $2", [diferenciaStock, productoIdParaStock]);
+      }
+  
+      // Responder con el éxito de la operación
+      return res.json({ mensaje: "Correcto", response: "Venta actualizada correctamente con id " + ven_id });
+  
+    } catch (error) {
+      console.error('Error al actualizar la venta:', error);
+      return res.status(500).json({ mensaje: "Error", response: "Error al procesar la solicitud: " + error.message });
+    }
+  };
+  
 
 
 const deleteVenta = async (req, res) => {
