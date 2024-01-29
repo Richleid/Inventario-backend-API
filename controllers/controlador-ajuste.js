@@ -124,7 +124,7 @@ const updateAjuste = async (req, res) => {
 }
 
 const updateAjusteDetalleById = async (req, res) => {
-  const { aju_det_id, aju_det_modificable, aju_det_estado } = req.body;
+  const { aju_det_id, aju_det_cantidad, aju_det_modificable } = req.body;
 
 
   if (typeof aju_det_modificable !== 'boolean') {
