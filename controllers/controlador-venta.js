@@ -2,13 +2,24 @@ const { db } = require("../cnn")
 
 const getVentas = async (req, res) => {
     try {
-        const response = await db.any('SELECT * FROM venta;'); // Utilizamos db.any en lugar de db.manyOrNone
-        res.json(response); // Enviamos directamente la respuesta sin envolverla en un objeto con 'ventas' como clave.
+      // Realiza una consulta JOIN para obtener los nombres del cliente y del producto junto con los datos de venta
+      const ventas = await db.any(`
+        SELECT ven.ven_id, ven.ven_fecha, ven.ven_cantidad, ven.ven_total, ven.ven_estado,
+               cli.cli_nombre AS nombre_cliente,
+               pro.pro_nombre AS nombre_producto
+        FROM venta ven
+        LEFT JOIN cliente cli ON ven.cli_id = cli.cli_id
+        LEFT JOIN producto pro ON ven.pro_id = pro.pro_id
+        WHERE ven.ven_estado = true
+        ORDER BY ven.ven_id;
+      `);
+      res.json(ventas);
     } catch (error) {
-        console.log(error.message); // Imprimir el mensaje de error
-        res.status(500).json({ message: error.message }); // Responder con el mensaje de error
+      console.log(error);
+      res.status(500).json({ message: "Error al obtener las ventas" });
     }
-}
+  };
+  
 
 const getVentaById = async (req, res) => {
     try {
