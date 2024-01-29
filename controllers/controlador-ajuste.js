@@ -124,14 +124,8 @@ const updateAjuste = async (req, res) => {
 }
 
 const updateAjusteDetalleById = async (req, res) => {
-  const { aud_usuario, aju_det_id, aju_det_cantidad, aju_det_modificable, aju_det_estado } = req.body;
+  const { aju_det_id, aju_det_modificable, aju_det_estado } = req.body;
 
-  if (!aju_det_cantidad) {
-    return res.status(400).json({
-      Error: '9997',
-      Mensaje: 'Revise aju_det_cantidad.'
-    });
-  }
 
   if (typeof aju_det_modificable !== 'boolean') {
     return res.status(400).json({
@@ -162,7 +156,7 @@ const updateAjusteDetalleById = async (req, res) => {
 };
 
 const putUpdateAjuste = async (req, res) => {
-  const { aud_usuario, aju_numero, aju_fecha, aju_descripcion, detalles } = req.body
+  const {  aju_numero, aju_fecha, aju_descripcion, detalles } = req.body
   try {
     //Insercion del ajuste
     const ajuste = await db.one(`UPDATE public.ajuste SET   aju_fecha=$1, aju_descripcion=$2, aju_estado=true
@@ -204,7 +198,7 @@ const updateAjusteDetalle = async (req, res) => {
 };
 
 const postCreateAjustecompleto = async (req, res) => {
-  const { aud_usuario, aju_fecha, aju_descripcion, detalles } = req.body;
+  const { aju_fecha, aju_descripcion, detalles } = req.body;
   try {
     // Creación del ajuste (similar a tu implementación actual)
     const ajuste = await db.one(/* tu código de inserción para el ajuste */);
