@@ -8,23 +8,24 @@ const getPrueba = (req, res) => {
 
 const getAjuste = async (req, res) => {
   try {
-    let response = []
-    const ajustes = await db.any(`SELECT aju_numero, aju_fecha, aju_descripcion, aju_estado FROM ajuste ORDER BY aju_numero;`)
-    for (let i = 0; i < ajustes.length; i++) {
-      const detalles = await db.any(`SELECT aju_det_id, pro_id, aju_det_cantidad, aju_det_modificable, aju_det_estado 
-                FROM ajuste_detalle WHERE aju_numero = $1;`, [ajustes[i].aju_numero])
-      for (let j = 0; j < detalles.length; j++) {
-        const producto = await db.one(`SELECT pro_id, pro_nombre, pro_descripcion, cat_id, pro_valor_iva, pro_costo, 
-                    pro_pvp, pro_imagen FROM producto WHERE pro_id=$1;`, [detalles[j].pro_id])
-        detalles[j].producto = producto
+    let response = [];
+    const ajustes = await db.any(`SELECT aju_numero, aju_fecha, aju_descripcion, aju_estado FROM ajuste ORDER BY aju_numero;`);
+    for (let ajuste of ajustes) {
+      const detalles = await db.any(`SELECT ad.aju_det_id, ad.pro_id, ad.aju_det_cantidad, ad.aju_det_modificable, ad.aju_det_tipo, p.pro_nombre, p.pro_descripcion, p.cat_id, p.pro_valor_iva, p.pro_costo, p.pro_pvp, p.pro_imagen
+                                      FROM ajuste_detalle ad
+                                      JOIN producto p ON ad.pro_id = p.pro_id
+                                      WHERE ad.aju_numero = $1;`, [ajuste.aju_numero]);
+      for (let detalle of detalles) {
+        const tipoAjuste = await db.oneOrNone(`SELECT tipo_id, tipo_nombre FROM tipo_ajuste WHERE tipo_id=$1;`, [detalle.aju_det_tipo]);
+        detalle.tipo_ajuste = tipoAjuste || { tipo_id: null, tipo_nombre: 'Desconocido' }; // Si no hay tipo de ajuste, asigna un valor por defecto
       }
-      ajustes[i].detalles = detalles
-      response.push(ajustes[i])
+      ajuste.detalles = detalles;
+      response.push(ajuste);
     }
-    res.json(response)
+    res.json(response);
   } catch (error) {
-    console.log(error.message)
-    res.json({ Mensaje: error.message })
+    console.log(error.message);
+    res.json({ Mensaje: error.message });
   }
 }
 
