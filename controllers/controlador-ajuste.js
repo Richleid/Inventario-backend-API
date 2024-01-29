@@ -29,6 +29,25 @@ const getAjuste = async (req, res) => {
   }
 }
 
+const getAjusteDetalles = async (req, res) => {
+  try {
+    // Obtener detalles de ajuste con el nombre del tipo de ajuste y el nombre del producto
+    const detallesAjuste = await db.any(`
+      SELECT ad.aju_det_id, ad.aju_numero, ad.pro_id, ad.aju_det_cantidad, ad.aju_det_modificable, ta.tipo_nombre, p.pro_nombre
+      FROM ajuste_detalle ad
+      JOIN tipo_ajuste ta ON ad.aju_det_tipo = ta.tipo_id
+      JOIN producto p ON ad.pro_id = p.pro_id
+      ORDER BY ad.aju_det_id;
+    `);
+
+    res.json(detallesAjuste);
+  } catch (error) {
+    console.error('Error al obtener detalles de ajuste simplificados:', error);
+    res.status(500).json({ mensaje: "Error al obtener detalles de ajuste simplificados", error: error.message });
+  }
+};
+
+
 /**
  * Obtiene el numero de ajuste que esta disponible 
  * y que continua con la secuencia
@@ -210,6 +229,7 @@ const postCreateAjustecompleto = async (req, res) => {
 };
 
 module.exports = {
+  getAjusteDetalles,
   getAjusteNumero,
   getAjuste, postCreateAjuste,
   updateAjusteDetalleById, 

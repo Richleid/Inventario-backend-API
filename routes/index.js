@@ -17,7 +17,7 @@ router.use(cors())
 //el paquete exportado
 const { getCategorias, getCategoriaById, getCategoriaByName, updateCategoria, deleteCategoria, postCreateCategoria } = require('../controllers/controlador-categoria')
 const { getPrueba, updateProductoById, updateEstadoProductoById, getProductos, postCreateProducto, getProductosById, getProductosByName, deleteProducto, getAtributosProById, getProductosD, getProductosByIdD, getProductosByNameD, putUpdateProducto } = require('../controllers/controlador-producto')
-const { getAjuste, updateAjuste, postCreateAjuste, updateAjusteDetalleById, postCreateDetalleAjuste, postCreateAjustecompleto, putUpdateAjuste, updateAjusteDetalle } = require('../controllers/controlador-ajuste')
+const { getAjuste, getAjusteDetalles, updateAjuste, postCreateAjuste, updateAjusteDetalleById, postCreateDetalleAjuste, postCreateAjustecompleto, putUpdateAjuste, updateAjusteDetalle } = require('../controllers/controlador-ajuste')
 const { postDatosSesion } = require('../controllers/controlador-sesion')
 const { getClientes, getClienteByName, postCliente, getClienteById, putCliente, deleteCliente } = require('../controllers/controlador-cliente')
 const { getVentas, postVenta, getVentaById, putVenta, deleteVenta } = require("../controllers/controlador-venta")
@@ -55,6 +55,7 @@ router.get('/productosD/nombre/:pro_nombre', validateAccesToken, getProductosByN
 
 //AJUSTE
 router.get('/ajustes', validateAccesToken, getAjuste)
+router.get('/ajustesDetalles', validateAccesToken, getAjusteDetalles)
 router.post('/ajustes/nuevo', validateAccesToken, postCreateAjuste)
 router.post('/detalles/nuevo', validateAccesToken, postCreateDetalleAjuste)
 router.post('/ajustes/nuevoC', validateAccesToken, postCreateAjustecompleto)
