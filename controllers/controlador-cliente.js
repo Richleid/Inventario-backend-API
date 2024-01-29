@@ -2,16 +2,11 @@ const { db } = require("../cnn");
 
 const getClientes = async (req, res) => {
     try {
-        const response = await db.manyOrNone("SELECT * FROM cliente;");
-        return res.json({
-            message: 'Clientes obtenidos con éxito',
-            clientes: response
-        });
+        const response = await db.any('SELECT * FROM cliente;');
+        res.json(response); // Envía directamente la respuesta sin envolverla en un objeto con 'clientes' como clave.
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            message: 'Error al obtener los clientes'
-        });
+        console.log(error.message); // Imprimir el mensaje de error
+        res.status(500).json({ message: error.message }); // Responder con el mensaje de error
     }
 }
 
