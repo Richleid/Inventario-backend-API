@@ -16,7 +16,7 @@ router.use(cors())
 //Creamos una variable para instanciar una variable para usar 
 //el paquete exportado
 const { getCategorias, getCategoriaById, getCategoriaByName, updateCategoria, deleteCategoria, postCreateCategoria } = require('../controllers/controlador-categoria')
-const { getPrueba, updateProductoById, updateEstadoProductoById, getProductos, postCreateProducto, getProductosById, getProductosByName, deleteProducto, getAtributosProById, getProductosD, getProductosByIdD, getProductosByNameD, putUpdateProducto } = require('../controllers/controlador-producto')
+const { getPrueba, updateProductoById, updateEstadoProductoById, getProductos, postCreateProducto, getProductosById, getProductosByName, deleteProducto, getAtributosProById, getProductosD, getProductosByIdD, getProductosByNameD, putUpdateProducto, deleteProductoB } = require('../controllers/controlador-producto')
 const { getAjuste, getAjusteDetalles, updateAjuste, postCreateAjuste, updateAjusteDetalleById, postCreateDetalleAjuste, postCreateAjustecompleto, putUpdateAjuste, updateAjusteDetalle } = require('../controllers/controlador-ajuste')
 const { postDatosSesion } = require('../controllers/controlador-sesion')
 const { getClientes, getClienteByName, postCliente, getClienteById, putCliente, deleteCliente } = require('../controllers/controlador-cliente')
@@ -44,10 +44,11 @@ router.get('/productos/atributos/:pro_id', getAtributosProById)
 router.get('/productos/nombre/:pro_nombre', getProductosByName)
 router.post('/productos/nuevo', validateAccesToken, postCreateProducto)
 router.put('/updateProducto', validateAccesToken, updateProductoById)
-router.put('/productos/delete', validateAccesToken, deleteProducto)
+router.put('/producto/:pro_id', validateAccesToken, deleteProducto)
 router.put('/updateEstadoProducto', validateAccesToken, updateEstadoProductoById)
 router.put('/ActualizarProducto', validateAccesToken, putUpdateProducto)
 router.put('/updateAjusteDetalle', validateAccesToken, updateAjusteDetalleById)
+router.delete("producto/:pro_id", validateAccesToken, deleteProductoB);
 
 router.get('/productosD', validateAccesToken, getProductosD)
 router.get('/productosD/id/:pro_id', validateAccesToken, getProductosByIdD)

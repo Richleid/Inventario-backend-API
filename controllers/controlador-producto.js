@@ -251,9 +251,9 @@ const updateProductoById = async (req, res) => {
 
 const deleteProducto = async (req, res) => {
   try {
-    const { pro_id } = req.body;
+    const pro_id = req.params.pro_id; // Obtén la ID del producto desde la ruta
     const response = await db.one(
-      "UPDATE producto SET pro_estado=false WHERE pro_id=$1 RETURNING*;",
+      "UPDATE producto SET pro_estado=false WHERE pro_id=$1 RETURNING *;",
       [pro_id]
     );
     res.json({
@@ -262,7 +262,7 @@ const deleteProducto = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    res.json({ message: error.message });
+    res.status(500).json({ message: "Error al desactivar el producto" });
   }
 };
 
@@ -324,7 +324,22 @@ const putUpdateProducto = async (req, res) => {
   }
 };
 
-
+const deleteProductoB = async (req, res) => {
+  try {
+    const pro_id = req.params.pro_id; // Obtén la ID del producto desde la ruta
+    const response = await db.one(
+      "UPDATE producto SET pro_estado=false WHERE pro_id=$1 RETURNING *;",
+      [pro_id]
+    );
+    res.json({
+      message: "Producto desactivado con éxito",
+      response,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Error al desactivar el producto" });
+  }
+};
 
 module.exports = {
   getPrueba,
@@ -340,4 +355,5 @@ module.exports = {
   getProductosByIdD,
   getProductosByNameD,
   putUpdateProducto,
+  deleteProductoB
 };
