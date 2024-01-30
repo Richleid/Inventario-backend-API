@@ -48,7 +48,8 @@ router.put('/producto/:pro_id', validateAccesToken, deleteProducto)
 router.put('/updateEstadoProducto', validateAccesToken, updateEstadoProductoById)
 router.put('/ActualizarProducto', validateAccesToken, putUpdateProducto)
 router.put('/updateAjusteDetalle', validateAccesToken, updateAjusteDetalleById)
-router.delete("producto/:pro_id", validateAccesToken, deleteProductoB);
+router.delete('/producto/:pro_id', validateAccesToken, deleteProductoB);
+
 
 router.get('/productosD', validateAccesToken, getProductosD)
 router.get('/productosD/id/:pro_id', validateAccesToken, getProductosByIdD)
