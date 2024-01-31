@@ -47,16 +47,26 @@ const getCategoriaByName = async (req, res) => {
 
 const postCreateCategoria = async (req, res) => {
     try {
-        const { cat_nombre } = req.body
+        const { cat_nombre } = req.body;
+
+        // Verificar si la categoría ya existe en la base de datos (ignorando mayúsculas y minúsculas)
+        const existingCategory = await db.oneOrNone('SELECT cat_id FROM categoria WHERE LOWER(cat_nombre) = LOWER($1);', [cat_nombre]);
+
+        if (existingCategory) {
+            return res.status(400).json({ message: 'La categoría ya existe en la base de datos.' });
+        }
+
+        // Si la categoría no existe, la insertamos en la base de datos
         const response = await db.one(`INSERT INTO public.categoria (cat_nombre, cat_estado)
-                                    VALUES ($1, true) returning*;`, [cat_nombre])
+                                    VALUES ($1, true) returning*;`, [cat_nombre]);
+
         return res.json({
-            mensaje: 'Categoria creada con éxito',
+            mensaje: 'Categoría creada con éxito',
             response: response
-        })
+        });
     } catch (error) {
-        console.log(error.message)
-        res.json({ message: error.message })
+        console.log(error.message);
+        res.json({ message: error.message });
     }
 }
 

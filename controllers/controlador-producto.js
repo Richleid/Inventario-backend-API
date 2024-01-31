@@ -147,9 +147,17 @@ const postCreateProducto = async (req, res) => {
       pro_stock // Incluir stock en los parámetros
     } = req.body;
 
+    // Verificar si existe un producto con el mismo nombre (ignorando mayúsculas y minúsculas)
+    const existingProduct = await db.oneOrNone('SELECT pro_id FROM producto WHERE LOWER(pro_nombre) = LOWER($1);', [pro_nombre]);
+
+    if (existingProduct) {
+      return res.status(400).json({ Mensaje: 'Ya existe un producto con el mismo nombre en la base de datos.' });
+    }
+
+    // Si el producto no existe, lo insertamos en la base de datos como se hacía anteriormente
     const response = await db.one(
       `INSERT INTO producto(pro_nombre, pro_descripcion, cat_id, pro_valor_iva, pro_costo, pro_pvp, 
-        pro_imagen, pro_estado, pro_stock) VALUES($1, $2, $3, $4, $5, $6, $7, true, $8) RETURNING *;`, // Incluir stock en la consulta
+        pro_imagen, pro_estado, pro_stock) VALUES($1, $2, $3, $4, $5, $6, $7, true, $8) RETURNING *;`,
       [
         pro_nombre,
         pro_descripcion,
@@ -161,16 +169,17 @@ const postCreateProducto = async (req, res) => {
         pro_stock // Pasar stock a la consulta
       ]
     );
-    
+
     res.json({
       Mensaje: "Producto creado con éxito",
       response: response,
     });
   } catch (error) {
-    console.log(error.Mensaje);
-    res.json({ Mensaje: error.Mensaje });
+    console.log(error.message);
+    res.json({ Mensaje: error.message });
   }
 };
+
 
 const updateEstadoProductoById = async (req, res) => {
   const { pro_id, pro_estado } = req.body;
