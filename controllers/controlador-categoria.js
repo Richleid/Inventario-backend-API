@@ -10,6 +10,17 @@ const getCategorias = async (req, res) => {
     }
 }
 
+const getCategoriasD = async (req, res) => {
+    try {
+        const response = await db.any('SELECT cat_id, cat_nombre FROM categoria WHERE cat_estado=false ORDER BY cat_id;')
+        res.json(response)
+    } catch (error) {
+        console.log(error.message)
+        res.json({ message: error.message })
+    }
+}
+
+
 const getCategoriaById = async (req, res) => {
     try {
         const cat_id = req.params.cat_id
@@ -82,6 +93,7 @@ const deleteCategoria = async (req, res) => {
 
 module.exports = {
     getCategorias,
+    getCategoriasD,
     getCategoriaById,
     getCategoriaByName,
     postCreateCategoria,

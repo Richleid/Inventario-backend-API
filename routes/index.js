@@ -15,7 +15,7 @@ router.use(cors())
 
 //Creamos una variable para instanciar una variable para usar 
 //el paquete exportado
-const { getCategorias, getCategoriaById, getCategoriaByName, updateCategoria, deleteCategoria, postCreateCategoria } = require('../controllers/controlador-categoria')
+const { getCategorias, getCategoriasD, getCategoriaById, getCategoriaByName, updateCategoria, deleteCategoria, postCreateCategoria } = require('../controllers/controlador-categoria')
 const { getPrueba, updateProductoById, updateEstadoProductoById, getProductos, postCreateProducto, getProductosById, getProductosByName, deleteProducto, getAtributosProById, getProductosD, getProductosByIdD, getProductosByNameD, putUpdateProducto, deleteProductoB } = require('../controllers/controlador-producto')
 const { getAjuste, getAjusteDetalles, updateAjuste, postCreateAjuste, updateAjusteDetalleById, postCreateDetalleAjuste, postCreateAjustecompleto, putUpdateAjuste, updateAjusteDetalle } = require('../controllers/controlador-ajuste')
 const { postDatosSesion } = require('../controllers/controlador-sesion')
@@ -31,6 +31,7 @@ router.post('/inicioSesion', validateAccesToken, postDatosSesion)
 
 //CATEGORÍAS
 router.get('/categorias', validateAccesToken, getCategorias)
+router.get('/categoriasD', validateAccesToken, getCategoriasD)
 router.get('/categorias/id/:cat_id', validateAccesToken, getCategoriaById)
 router.get('/categorias/nombre/:cat_nombre', validateAccesToken, getCategoriaByName)
 router.post('/categorias/nuevo', validateAccesToken, postCreateCategoria)
